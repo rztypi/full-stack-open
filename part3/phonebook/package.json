@@ -6,13 +6,16 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rm -rf dist && cd ../../part2/phonebook && npm run build && cp -r dist ../../part3/phonebook/dist/"
   },
   "keywords": [],
   "author": "Rezz Tony C. Piraman",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "express": "^4.18.3",
+    "mongoose": "^8.2.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

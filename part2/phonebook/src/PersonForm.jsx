@@ -1,7 +1,7 @@
 import { useState } from "react";
 import personService from "./services/persons";
 
-const PersonForm = ({ personsState, setNotification }) => {
+const PersonForm = ({ personsState, pushNotification }) => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [persons, setPersons] = personsState;
@@ -35,13 +35,16 @@ const PersonForm = ({ personsState, setNotification }) => {
               p.id !== existingPerson.id ? p : returnedPerson
             )
           );
-          setNotification({
+          pushNotification({
             type: "success",
-            message: `Replaced "${returnedPerson.name}" number to "${returnedPerson.number}"`,
+            message: `Replaced "${existingPerson.number}" to "${returnedPerson.number}"`,
           });
-          setTimeout(() => {
-            setNotification(null);
-          }, 5000);
+        })
+        .catch((err) => {
+          pushNotification({
+            type: "error",
+            message: err.response.data.error,
+          });
         });
     } else {
       const personObject = {
@@ -49,16 +52,21 @@ const PersonForm = ({ personsState, setNotification }) => {
         number: newNumber,
       };
 
-      personService.create(personObject).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setNotification({
-          type: "success",
-          message: `Added "${returnedPerson.name}"`,
+      personService
+        .create(personObject)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          pushNotification({
+            type: "success",
+            message: `Added "${returnedPerson.name}"`,
+          });
+        })
+        .catch((err) => {
+          pushNotification({
+            type: "error",
+            message: err.response.data.error,
+          });
         });
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-      });
     }
 
     setNewName("");

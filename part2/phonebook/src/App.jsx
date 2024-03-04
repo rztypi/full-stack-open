@@ -11,6 +11,13 @@ const App = () => {
   const [filter, setFilter] = useState("");
   const [notification, setNotification] = useState(null);
 
+  const pushNotification = ({ type, message }) => {
+    setNotification({ type, message });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  };
+
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
@@ -25,13 +32,13 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm
         personsState={[persons, setPersons]}
-        setNotification={setNotification}
+        pushNotification={pushNotification}
       />
       <h3>Numbers</h3>
       <Persons
         personsState={[persons, setPersons]}
         filter={filter}
-        setNotification={setNotification}
+        pushNotification={pushNotification}
       />
     </div>
   );
