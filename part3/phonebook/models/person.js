@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-console */
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);

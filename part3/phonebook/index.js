@@ -8,35 +8,12 @@ const app = express();
 app.use(express.static("dist"));
 app.use(express.json());
 
-morgan.token("body", (req, res) => {
-  return req.method === "POST" ? JSON.stringify(req.body) : null;
-});
+morgan.token("body", (req, res) =>
+  req.method === "POST" ? JSON.stringify(req.body) : null
+);
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
-
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
 
 app.get("/api/persons", (req, res) => {
   Person.find({}).then((persons) => {
@@ -74,7 +51,7 @@ app.delete("/api/persons/:id", (req, res, next) => {
 });
 
 app.post("/api/persons", (req, res, next) => {
-  const body = req.body;
+  const { body } = req;
 
   const person = new Person({
     name: body.name,
@@ -84,7 +61,6 @@ app.post("/api/persons", (req, res, next) => {
   person
     .save()
     .then((addedPerson) => {
-      console.log("person saved");
       res.json(addedPerson);
     })
     .catch((err) => next(err));
@@ -116,15 +92,17 @@ app.use(unknownEndpoint);
 const errorHandler = (err, req, res, next) => {
   if (err.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
-  } else if (err.name === "ValidationError") {
+  }
+  if (err.name === "ValidationError") {
     return res.status(400).json({ error: err.message });
   }
 
-  next(err);
+  return next(err);
 };
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`Listening at port ${PORT}`);
 });
